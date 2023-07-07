@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"river/gomod/train"
+	"river/gomod/excel"
 	"strconv"
 	"strings"
 	"unsafe"
@@ -52,7 +52,12 @@ func main() {
 	//str := SliceTypeChange(bytes[:])
 	//fmt.Println(str)
 
-	train.CrawlPage()
+	// 爬虫训练
+	//train.CrawlPage()
+
+	// Excel处理训练
+	//excel.CreateExcel()
+	excel.ReadExcel()
 }
 
 func c() (i int) {
