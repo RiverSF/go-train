@@ -6,36 +6,46 @@ import (
 	"strconv"
 )
 
-func CreateExcel() {
+func CreateExcel(data [][]string, path string, sheetName string) {
+	if data == nil || path == "" {
+		fmt.Println()
+		return
+	}
+
 	f := excelize.NewFile()
 	defer func() {
 		if err := f.Close(); err != nil {
 			fmt.Println(err)
+			return
 		}
 	}()
 
 	//create a new sheet
-	//index, err := f.NewSheet("Sheet2")
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
+	if sheetName == "" {
+		sheetName = "Sheet1"
+	} else {
+		index, err := f.NewSheet(sheetName)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		//设置默认工作表
+		f.SetActiveSheet(index)
+	}
 
 	// mock data
-	data := make([][]string, 10)
-	for i := 0; i < 10; i++ {
-		row := make([]string, 5)
-		for j := 0; j < 5; j++ {
-			if i == 0 {
-				row[j] = "表头" + strconv.Itoa(j)
-				continue
-			}
-			row[j] = strconv.Itoa(i * j)
-		}
-		data[i] = row
-	}
-	//fmt.Println(data)
-	//return
+	//data := make([][]string, 10)
+	//for i := 0; i < 10; i++ {
+	//	row := make([]string, 5)
+	//	for j := 0; j < 5; j++ {
+	//		if i == 0 {
+	//			row[j] = "表头" + strconv.Itoa(j)
+	//			continue
+	//		}
+	//		row[j] = strconv.Itoa(i * j)
+	//	}
+	//	data[i] = row
+	//}
 
 	//set value of a cell
 	for line_idx, rows := range data {
@@ -44,18 +54,16 @@ func CreateExcel() {
 		for col_idx, cell_val := range rows {
 			col_key := string(65+col_idx) + strconv.Itoa(first_line_idx)
 			//fmt.Println(col_idx, cell_val, col_key)
-			err := f.SetCellValue("Sheet1", col_key, cell_val)
+			err := f.SetCellValue(sheetName, col_key, cell_val)
 			if err != nil {
 				fmt.Println(err)
 			}
 		}
 	}
 
-	//设置默认工作表
-	//f.SetActiveSheet(index)
-
 	//save spreadsheet by the given path
-	if err := f.SaveAs("excel/excel.xlsx"); err != nil {
+	//excel/excel.xlsx
+	if err := f.SaveAs(path); err != nil {
 		fmt.Println(err)
 	}
 

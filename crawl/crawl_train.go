@@ -1,8 +1,9 @@
-package train
+package crawl
 
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 type Fetcher interface {
@@ -10,20 +11,21 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
-// CrawlUrlCounter 记录已抓取的URL
-type CrawlUrlCounter struct {
+// UrlCounter 记录已抓取的URL
+type UrlCounter struct {
 	url map[string]int
 	mux sync.Mutex
 }
 
 // Crawl 使用 fetcher 从某个 URL 开始递归的爬取页面，直到达到最大深度。
-func Crawl(url string, depth int, fetcher Fetcher, counter *CrawlUrlCounter) {
+func Crawl(url string, depth int, fetcher Fetcher, counter *UrlCounter) {
 	fmt.Println(url, depth)
 
 	if depth <= 0 {
 		return
 	}
 
+	// 已请求过的 URL 去重
 	_, ok := counter.url[url]
 	fmt.Println(ok)
 	if ok {
@@ -34,25 +36,26 @@ func Crawl(url string, depth int, fetcher Fetcher, counter *CrawlUrlCounter) {
 	counter.mux.Unlock()
 	fmt.Println(counter.url)
 
+	// 请求 URL
 	body, urls, err := fetcher.Fetch(url)
 	//_, urls, err := fetcher.Fetch(url)
 	if err != nil {
-		//fmt.Println(err)
+		fmt.Println(err)
 		return
 	}
 
 	fmt.Printf("found: %s %q %v\n", url, body, urls)
 	for _, u := range urls {
 		go Crawl(u, depth-1, fetcher, counter)
-		//time.Sleep(1 * time.Millisecond)
 	}
 
+	time.Sleep(1 * time.Millisecond)
 	fmt.Println("end")
-	//return
+	return
 }
 
-func CrawlPage() {
-	counter := &CrawlUrlCounter{url: make(map[string]int)}
+func CrawlTrain() {
+	counter := &UrlCounter{url: make(map[string]int)}
 	Crawl("https://golang.org/", 4, fetcher, counter)
 }
 

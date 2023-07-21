@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"river/gomod/excel"
+	"river/gomod/crawl"
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 )
 
@@ -22,9 +23,9 @@ func main() {
 	//fmt.Println("数组长度 = ", len(arr))
 	//fmt.Println("数组容量 = ", cap(arr))
 	//
-	//toDay := time.Now()
-	//
-	//fmt.Println("Now Time ", toDay.Hour())
+	//year, month, day := time.Now().Date()
+	date_time := time.Now().Format("20060102")
+	fmt.Println("Now Time ", date_time)
 	//
 	//fmt.Println("My favorite number is", rand.Int31n(1000))
 	//
@@ -53,11 +54,13 @@ func main() {
 	//fmt.Println(str)
 
 	// 爬虫训练
-	//train.CrawlPage()
+	//crawl.CrawlTrain()
+	//crawl.CrawlDemo()
+	crawl.GoColly()
 
 	// Excel处理训练
 	//excel.CreateExcel()
-	excel.ReadExcel()
+	//excel.ReadExcel()
 }
 
 func c() (i int) {
