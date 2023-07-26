@@ -37,6 +37,9 @@ func main() {
 	//intB, _ := strconv.Atoi(bbb)
 	//fmt.Println(intB)
 	//
+	//float64 转换成 string
+	//strconv.FormatFloat(starF, 'f', 1, 32)
+	//
 	////defer 在跳出当前方法时执行，先进后出执行
 	//fmt.Println(c())
 	//
@@ -54,9 +57,9 @@ func main() {
 	//fmt.Println(str)
 
 	// 爬虫训练
-	//crawl.CrawlTrain()
+	crawl.CrawlTrain()
 	//crawl.CrawlDemo()
-	crawl.GoColly()
+	//crawl.GoColly()
 
 	// Excel处理训练
 	//excel.CreateExcel()
