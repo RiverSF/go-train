@@ -62,7 +62,10 @@ func Post() (res []byte, err error) {
 		return nil, fmt.Errorf("body error: 【%s】", err.Error())
 	}
 
-	content, _ := io.ReadAll(resp.Body)
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read error:【%s】", err.Error())
+	}
 
 	//str := *(*string)(unsafe.Pointer(&content))
 	//fmt.Println(str)
@@ -70,7 +73,7 @@ func Post() (res []byte, err error) {
 	//返回参数格式化存储
 	//json.Unmarshal(content, &adx_report_data)
 
-	return content, fmt.Errorf("read error:【%s】", err.Error())
+	return content, nil
 }
 
 func Get() (res []byte, err error) {
@@ -92,8 +95,11 @@ func Get() (res []byte, err error) {
 	}
 
 	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read error:【%s】", err.Error())
+	}
 
 	//fmt.Println(string(content))
 
-	return content, fmt.Errorf("read error:【%s】", err.Error())
+	return content, nil
 }
