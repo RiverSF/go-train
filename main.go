@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"river/gomod/crawl"
+	"river/gomod/train"
 	"strconv"
 	"strings"
-	"time"
+	"sync"
 	"unsafe"
 )
 
@@ -14,18 +14,49 @@ type Struct struct {
 	Z, w string
 }
 
+type Test struct {
+	Ac string `json:"aa"`           //字段在JSON中显示为键 a
+	Bc string `json:"bb,omitempty"` //字段在JSON中显示为键 b, 如果该字段的值为空，则从对象中省略该字段
+	Cc string `json:",omitempty"`   //字段在JSON中显示为键"C"(默认值)，但是如果字段值为空，则跳过该字段
+	Dc string `json:"-"`            //忽略该字段
+	Ec string `json:"-,"`           //字段在JSON中显示为键"-"
+}
+
 var arr [10]int
 
+var mu sync.Mutex
+
 func main() {
-	//arr[0] = 1
-	//
+	mu.Lock()
+	arr[0] = 1
+	mu.Unlock()
 	//fmt.Println("数组 = ", arr)
 	//fmt.Println("数组长度 = ", len(arr))
 	//fmt.Println("数组容量 = ", cap(arr))
 	//
 	//year, month, day := time.Now().Date()
-	date_time := time.Now().Format("20060102")
-	fmt.Println("Now Time ", date_time)
+	//date_time := time.Now().Format("20060102")
+	//fmt.Println("Now Time ", date_time)
+
+	// json 转义
+	//t := Test{
+	//	"abcde",
+	//	"abcde",
+	//	"abcde",
+	//	"abcde",
+	//	"abcde",
+	//}
+	//en_t, _ := json.Marshal(t)	//返回值为字节切片，string 类型转换后可打印明文内容
+	//en_t_str := string(en_t)
+	//fmt.Println(en_t_str)
+	// json 解析
+	//var m Test
+	////json.Unmarshal(en_t, &m)
+	//json.Unmarshal([]byte(en_t_str), &m)
+	//fmt.Println(m, m.Dc12)
+
+	train.Post()
+	train.Get()
 	//
 	//fmt.Println("My favorite number is", rand.Int31n(1000))
 	//
@@ -57,7 +88,7 @@ func main() {
 	//fmt.Println(str)
 
 	// 爬虫训练
-	crawl.CrawlTrain()
+	//crawl.CrawlTrain()
 	//crawl.CrawlDemo()
 	//crawl.GoColly()
 
