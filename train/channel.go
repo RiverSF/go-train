@@ -1,9 +1,12 @@
 package train
 
-import "golang.org/x/tour/tree"
-import "fmt"
-import "strings"
-import "strconv"
+import (
+	"fmt"
+	"golang.org/x/tour/tree"
+	"strconv"
+	"strings"
+	"time"
+)
 
 // Walk 步进 tree t 将所有的值从 tree 发送到 channel ch。
 func Walk(t *tree.Tree, ch chan int) {
@@ -46,4 +49,39 @@ func Same(t1, t2 *tree.Tree) bool {
 
 func ChannelOut() {
 	fmt.Println(Same(tree.New(1), tree.New(2)))
+
+	//只读
+	//var readOnlyChannel = make(<-chan int)
+
+	//只写
+	//var writeOnlyChannel = make(chan<- int)
+
+	// 模拟生产者与消费者 使用单向通道约束
+	c := make(chan int, 2)
+
+	go Consumer1(c)
+	go Consumer2(c)
+
+	Producer(c)
+
+	time.Sleep(time.Second)
+}
+
+func Producer(c chan<- int) {
+	for i := 0; i < 10; i++ {
+		c <- i
+		fmt.Println(i)
+	}
+}
+
+func Consumer1(c <-chan int) {
+	for m := range c {
+		fmt.Printf("oh, I get luckly num: %v\n", m)
+	}
+}
+
+func Consumer2(c <-chan int) {
+	for m := range c {
+		fmt.Printf("oh, I get luckly num too: %v\n", m)
+	}
 }

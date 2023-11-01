@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"river/gomod/train"
+	"os"
+	"river/gomod/questions"
 	"strconv"
 	"strings"
 	"sync"
@@ -22,18 +23,21 @@ type Test struct {
 	Ec string `json:"-,"`           //字段在JSON中显示为键"-"
 }
 
-var arr [10]int
-
 var mu sync.Mutex
 
 func main() {
-	mu.Lock()
-	arr[0] = 1
-	mu.Unlock()
-	//fmt.Println("数组 = ", arr)
+	//mu.Lock()
+	// new 产生一个指针类型变量，建议使用make初始化变量
+	//arr := new([]int)
+	//mu.Unlock()
+	//fmt.Println("数组 = ", *arr)
 	//fmt.Println("数组长度 = ", len(arr))
 	//fmt.Println("数组容量 = ", cap(arr))
-	//
+
+	//stringSpaceFilter()
+
+	//train.ChannelOut()
+
 	//year, month, day := time.Now().Date()
 	//date_time := time.Now().Format("20060102")
 	//fmt.Println("Now Time ", date_time)
@@ -51,19 +55,16 @@ func main() {
 	//fmt.Println(en_t_str)
 	// json 解析
 	//var m Test
-	////json.Unmarshal(en_t, &m)
+	//json.Unmarshal(en_t, &m)
 	//json.Unmarshal([]byte(en_t_str), &m)
 	//fmt.Println(m, m.Dc12)
 
-	train.Post()
-	train.Get()
-	//
 	//fmt.Println("My favorite number is", rand.Int31n(1000))
 	//
 	//aaa := "中国"
 	//fmt.Println(len(aaa), utf8.RuneCountInString(aaa), []rune(aaa))
 	//
-	////string转换为int
+	//string转换为int
 	//bbb := "123"
 	//intB, _ := strconv.Atoi(bbb)
 	//fmt.Println(intB)
@@ -71,18 +72,18 @@ func main() {
 	//float64 转换成 string
 	//strconv.FormatFloat(starF, 'f', 1, 32)
 	//
-	////defer 在跳出当前方法时执行，先进后出执行
+	//defer 在跳出当前方法时执行，先进后出执行
 	//fmt.Println(c())
 	//
-	////指针 空值
+	//指针 空值
 	//var ptr *int
 	//if ptr == nil {
 	//	fmt.Printf("ptr 的值为 : %p\n", ptr)
 	//}
 	//
-	////wc.Test(WordCount)
+	//wc.Test(WordCount)
 	//
-	////ArrayToString()
+	//ArrayToString()
 	//bytes := [4]byte{1,2,3,4}
 	//str := SliceTypeChange(bytes[:])
 	//fmt.Println(str)
@@ -95,6 +96,10 @@ func main() {
 	// Excel处理训练
 	//excel.CreateExcel()
 	//excel.ReadExcel()
+
+	//go 训练题
+	questions.Q20231030()
+	questions.Q20231031()
 }
 
 func c() (i int) {
@@ -144,4 +149,22 @@ func WordCount(s string) map[string]int {
 		}
 	}
 	return m
+}
+
+// html 实体空格回车过滤
+func stringSpaceFilter() {
+
+	txt, _ := os.ReadFile("strings.txt")
+	fmt.Println(txt)
+
+	oStr := string(txt)
+	fmt.Println(oStr)
+
+	utf8Spaces := []rune{194, 160}
+	for _, v := range utf8Spaces {
+		oStr = strings.ReplaceAll(oStr, string(v), "")
+	}
+	oStr = strings.ReplaceAll(oStr, " ", "")
+	fmt.Println([]byte(oStr))
+	fmt.Println(oStr)
 }

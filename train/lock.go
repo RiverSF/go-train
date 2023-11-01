@@ -10,6 +10,17 @@ import (
 type SafeCounter struct {
 	v   map[string]int
 	mux sync.Mutex
+
+	// 结构体可以自动继承匿名内部结构体的所有方法
+	sync.Mutex //互斥锁
+	//sync.RWMutex//读写锁
+}
+
+// 使用结构体中匿名方法
+func (c *SafeCounter) Sub(key string) {
+	c.Lock()
+	c.v[key]--
+	c.Unlock()
 }
 
 // Inc 增加给定 key 的计数器的值。
