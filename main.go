@@ -99,7 +99,8 @@ func main() {
 
 	//go 训练题
 	questions.Q20231030()
-	questions.Q20231031()
+	//questions.Q20231031()
+	//questions.Q20231101()
 }
 
 func c() (i int) {
