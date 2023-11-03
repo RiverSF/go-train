@@ -101,6 +101,8 @@ func main() {
 	questions.Q20231030()
 	//questions.Q20231031()
 	//questions.Q20231101()
+	//questions.Q20231102()
+	//questions.Q20231103()
 }
 
 func c() (i int) {

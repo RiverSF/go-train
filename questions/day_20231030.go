@@ -2,10 +2,22 @@ package questions
 
 import "fmt"
 
-func f1() (r int) {
+func f0() int { //匿名返回值
+
+	r := 1
 	defer func() {
 		r++
 	}()
+
+	return r
+}
+
+func f1() (r int) { //有名返回值
+
+	defer func() {
+		r++
+	}()
+
 	return 1
 }
 
@@ -19,14 +31,8 @@ func f2() (r int) {
 
 func f3() (r int) {
 
-	//defer func() {
-	//	r = r + 5
-	//	fmt.Println("无参数 r", r)
-	//}()
-
 	defer func(r int) {
 		r = r + 5
-		fmt.Println("有参数 r", r)
 	}(r)
 
 	return 1
@@ -34,22 +40,21 @@ func f3() (r int) {
 
 func Q20231030() {
 	/**
-	f1()、f2()、f3() 函数分别返回什么？
+	f0()、f1()、f2()、f3() 函数分别返回什么？
 	*/
-	fmt.Println(f1(), f2(), f3())
+	fmt.Println(f0(), f1(), f2(), f3())
 }
 
 func q20231030() {
-	// defer 在跳出当前方法时执行; 先进后出执行;
-	// defer 函数【不带参数时】：匿名函数在 return【之前】执行，因此当 return 1 被执行时，defer 语句也会被执行。这意味着 r 在被返回之前已经被递增了
-	// defer 函数【带参数时】： 匿名函数在 return【之后】执行
+	// f0 = 1
+	// f0 是匿名返回值，匿名返回值是在 return 执行时被声明，因此当 defer 声明时，还不能访问到匿名返回值，defer 的修改不会影响到匿名返回值。
 
-	// f1
-	// 由于 defer 语句在函数返回之前执行，因此当 return 0 被执行时，defer 语句也会被执行
+	// f1 = 2
+	// f1 是有名返回值，先给 r 赋值，r=1，执行 defer 语句，r=2，然后 return
 
-	// f2
+	// f2 = 5
 	// 返回变量为 r，defer 方法中变量是 t，因此 r = 5
 
-	// f3
-	// defer 语句注册的匿名函数带有参数，因此它会在函数返回后执行该匿名函数
+	// f3 = 1
+	// defer 函数有参数传递，在defer入栈时就会对参数进行拷贝传递，因此参数作用域仅限defer函数内部，不会影响外层return结果
 }
