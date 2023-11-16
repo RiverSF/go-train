@@ -98,11 +98,7 @@ func main() {
 	//excel.ReadExcel()
 
 	//go 训练题
-	questions.Q20231030()
-	//questions.Q20231031()
-	//questions.Q20231101()
-	//questions.Q20231102()
-	//questions.Q20231103()
+	questions.Q20231116()
 }
 
 func c() (i int) {
