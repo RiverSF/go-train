@@ -25,6 +25,10 @@ type Test struct {
 
 var mu sync.Mutex
 
+//基本数据类型 区分
+//值类型： int 系列, float 系列, bool, string 、数组和结构体 struct
+//引用类型：指针、slice 切片、map、管道 chan、interface、函数 都是引用类型
+
 func main() {
 	//mu.Lock()
 	// new 产生一个指针类型变量，建议使用make初始化变量
@@ -98,7 +102,7 @@ func main() {
 	//excel.ReadExcel()
 
 	//go 训练题
-	questions.Q20231117()
+	questions.Q20231123()
 }
 
 func c() (i int) {
