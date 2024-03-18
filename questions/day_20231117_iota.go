@@ -12,10 +12,11 @@ const (
 	d = iota
 	e = 50
 	ff
+	g = iota
 )
 
 func Q20231117() {
-	fmt.Println(a, b, c, d, e, ff)
+	fmt.Println(a, b, c, d, e, ff, g)
 }
 
 func q20231117() {

@@ -15,7 +15,6 @@ func app() func(string) string {
 
 func Q20231031() {
 	/**
-	https://studygolang.com/interview/question
 
 	以下代码输出什么？
 	如果最后再加一行代码：fmt.Println(a("All"))，它输出什么？
