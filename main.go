@@ -30,6 +30,9 @@ var mu sync.Mutex
 //引用类型：指针、slice 切片、map、管道 chan、interface、函数 都是引用类型
 
 func main() {
+	//go 训练题
+	questions.Q20240322()
+
 	//mu.Lock()
 	// new 产生一个指针类型变量，建议使用make初始化变量
 	//arr := new([]int)
@@ -100,9 +103,6 @@ func main() {
 	// Excel处理训练
 	//excel.CreateExcel()
 	//excel.ReadExcel()
-
-	//go 训练题
-	questions.Q20231117()
 }
 
 func c() (i int) {
