@@ -42,7 +42,7 @@ func init() {
 
 func main() {
 	//go 训练题
-	questions.Q20240322()
+	questions.Q20240510()
 
 	//mu.Lock()
 	// new 产生一个指针类型变量，建议使用make初始化变量
