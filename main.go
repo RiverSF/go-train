@@ -40,6 +40,12 @@ func init() {
 	fmt.Println("init1:", 123)
 }
 
+// 完成对变量的拷贝赋值
+func (d *Test) clone() *Test {
+	template := *d   // * 读取指针值
+	return &template // & 生成指针
+}
+
 func main() {
 	//go 训练题
 	questions.Q20240510()
