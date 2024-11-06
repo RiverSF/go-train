@@ -10,6 +10,8 @@ package routers
 import (
 	"api/controllers"
 
+	"github.com/beego/beego/v2/server/web/context"
+
 	beego "github.com/beego/beego/v2/server/web"
 )
 
@@ -27,4 +29,17 @@ func init() {
 		),
 	)
 	beego.AddNamespace(ns)
+
+	beego.Router("/proto/test", &controllers.TestProtoPmpController{})
+
+	beego.Get("/test", func(ctx *context.Context) {
+
+		//fmt.Println(config.String("httpport"))
+		//
+		//db, _ := config.GetSection("db")
+		//
+		//fmt.Println(db["read_host"])
+
+		ctx.Output.Body([]byte("hello world 1"))
+	})
 }
