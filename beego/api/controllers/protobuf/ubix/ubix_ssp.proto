@@ -1,0 +1,277 @@
+
+syntax = "proto3";
+
+package ubix;
+
+option java_package = "com.standard.pb.api";
+option java_outer_classname = "apiProto";
+option java_multiple_files = true;
+
+option go_package="./;ubix";
+
+// 尺寸
+message Size {
+  uint32 width = 1;    // 宽度。
+  uint32 height = 2;   // 高度。
+  string ratio = 3;    // 比例: 2:3, 9:16
+}
+
+// 广告请求
+message BidRequest {
+  string request_id = 1;  // 必填。请求的唯一标志
+  string api_version = 2; // 必填。此API的版本。格式如：1.0.7
+  User user = 3;          // 媒体侧提供的用户信息，用于eCPM优化。
+  App app = 4;            // 必填。移动app的信息。
+  Device device = 5;      // 必填。移动设备的信息。
+  repeated AdSlot ad_slots = 6; // 必填，至少一个。广告位的信息。目前只支持一个
+  string ua = 7;                // 必填。User-Agent
+  string ipv4 = 8;              // 必填。设备的ipv4，用于定位，地域定向
+  int32 is_support_macro = 9;   // 是否支持宏替换，默认为0。0：不支持 1：支持。
+  string ipv6 = 10; // 非必填。设备的ipv6，用于定位，地域定向
+}
+
+// 媒体侧提供的用户信息，用于eCPM优化。
+message User {
+  string uid = 1;                // 选填，用户在媒体上注册的ID；如没有，则传空
+  uint32 gender = 2;             // 可选。用户的性别。0: Unknown, 1: Male, 2: Female
+  uint32 age = 3;                // 可选。用户的年龄段。[0-18):0；[18-24):18；[24-31):24；[31-41):31；[41-51):41；50以上传50
+  repeated string keywords = 4;  // 关键字
+  repeated string segments = 5;  // 策略id列表（人群包）
+  string ext = 6;                // 扩展字段
+  repeated string tags = 7;  // 标签id列表
+  repeated string category = 8;  // 用户分类
+  repeated string installed_apps = 9; // 安装的应用列表
+}
+
+// App相关信息
+message App {
+  // 地理位置信息
+  message Geo {
+    double latitude = 1;      // 推荐。GPS纬度
+    double longitude = 2;     // 推荐。GPS经度
+    string local_tz_name = 3; // local时区，如"Asia/Shanghai"
+    string city_code = 4;     // 市国标码
+    string province_code = 5; // 省份国标码
+    string district_code = 6; // 区县国标码
+    string country_code = 7;  // 国家代码
+  }
+  string app_id = 1;       // 必填。应用ID。
+  string name = 2;         // 可选。APP名称。
+  string package_name = 3; // 必填。IOS填写bundleID，Android填写包名
+  string version = 4;      // 可选。 app的版本信息。格式如：3.2.1
+  Geo geo = 5;             // 发起广告请求时，设备的地理职位信息
+  bool is_paid_app = 6;    // 是否为付费app
+  string publisher_id = 7; // 渠道id
+  repeated string category = 8;     // 应用分类
+}
+
+// 设备信息
+message Device {
+  message DeviceId {// 设备ID类信息
+    string id =1;          // 非必填，预留设备id字段
+    string idfa = 2;       // IOS必填。IOS为IDFA（明文，大写），带"-"，若取不到则传空值""
+    string idfv = 3;       // IOS必填，若取不到则传空值""
+    string imei = 4;       // 设备IMEI（明文），Android必填，若取不到则传空值""
+    string imei_md5 = 5;   // IMEI号的MD5加密，若取不到则传空值""
+    string android_id = 6; // 原文，明文
+    string oaid = 7;       // 匿名设备标识符，原文，明文
+    string mac = 8;        // 设备的mac地址，原文
+    string wifi_mac = 9;   // WIFI路由器MAC地址
+    string ssid = 10;      // 选填。无线网SSID名称
+    string imsi = 11;      // 选填。IMSI（SIM卡串号）（一般Android可以取到）
+    string idfamd5 = 12;   // 选填 idfa md5加密大写
+    string android_id_md5 = 14; //android id md5
+    string mac_md5 = 15;        // 原始 mac 去冒号转大写之后 MD5 值
+    string oaid_md5 = 16;       // oaid md5
+    string wifi_mac_md5 = 17;       // WIFI MAC MD5
+    repeated CAID caids = 18;         //中广协CAID
+    string paid = 19;        //PDD归因参数
+
+    message CAID {
+      string version = 1;         //caid版本
+      string caid = 2;       // caid值
+      string caid_md5 = 3;       // caid_md5值
+    }
+
+  }
+
+  DeviceId did = 1; // 设备ID信息。必填
+  int32 device_type = 2; // 必填。设备类型。0: Unknown, 1: Phone, 2: Tablet
+  int32 os_type = 3;     // 必填。操作系统类型。0: Unknown, 1: Android, 2: IOS, 3: Windows
+  string os_version = 4; // 可选。操作系统版本。格式如：3.2.1
+  string vendor = 5;     // 必填。设备厂商，如Apple, Samsung
+  string model = 6;      // Android必填。设备机型名称，如：iPhone 11 Pro, Galaxy
+  string hw_model = 7;   // IOS必填。IOS系统型号。
+  string hw_machine = 8; // IOS必填 cpu型号
+  string language = 9;   // 可选。设备设置的语言
+  int32 conn_type = 10;  // 可选。设备的网络类型。0: Unknown, 1: Wifi, 2: 2G, 3: 3G, 4: 4G 5：5G
+  Size screen_size = 11; // 设备宽x高，单位：像素
+  float dpi = 12;           // 屏幕密度
+  string device_name = 13;  // 建议。手机名称
+  int32 orientation = 14;   // 建议。设备屏幕方向。0: Unknown, 1: 竖屏, 2: 横屏
+  string carrier_type = 15; // 开发者不填写。移动运营商分类。0: Unknown, 1: Mobile, 2: Unicom, 3: Telecom
+  int32 carrier_code = 16;  // 由国际电联统一分配的移动运营商代码。MCC(3位) + MNC(2位)
+  string startup_time = 18; // 手机开机时间，如"1596270702.486691"，ios必传，Android推荐
+  string mb_time = 19;      // 系统版本更新时间，如"1596632447.155983"，ios必传，Android推荐
+  int32 cpu_num = 20;       // cpu数目，如"4"，ios必传，Android推荐
+  int64 disk_capacity = 21; // 磁盘容量大小（单位B）, ios必传，Android推荐
+  int64 mem_capacity = 22;  // 内存容量大小（单位B）, ios必传，Android推荐
+  int32 auth_status = 23;   // 广告标志授权情况，如"3"（代表authorized），ios必传
+  int32 battery_power = 24; // 设备电量百分比，取整数，数值区间 0~100。
+  string vivo_store_ver = 25; // vivo 应用商店版本号，如果是 vivo 则必填
+  string huawei_ver_code_of_hms = 26; // HMS Core 版本号，实现被推广应用的静默安装依赖 HMS Core 能力。 华为设备且投放华为平台必填。
+  string huawei_ver_code_of_ag = 27; // 应用市场版本号。与下载类广告的转化路径有关。 华为设备且投放华为平台必填。
+
+}
+
+// 交易模式信息
+message TradingMode {
+  int32 type = 1;       // 交易模式。0: cpm分成 1：PD 2:RTB 3:PDB
+  string deal_id = 2;   // 双方线下确定好的deal_id。当type=1、3时必填
+  uint64 floor_cpm = 3; // 单位为cpm分
+}
+
+// 广告位信息
+message AdSlot {
+  message CreativeSpecs {// 创意规格信息
+    int32 creative_type = 1; // 必填。可接受的创意类型。1：单图，2：多图，3：视频
+    repeated Size accepted_sizes = 2; // 必填。接受的素材尺寸，单位：像素
+    int32 video_min_duration = 3;     // 期望视频的最小长度（秒），0标识不限制
+    int32 video_max_duration = 4;     // 期望视频的最大长度（秒），0表示不限制
+    Template template = 5;  // 选填，广告模版
+
+  }
+
+  string id = 1;            // 必填。广告位id
+  int32 ad_type = 2;        // 必填。广告类型。1开屏；2信息流；3图标 4Banner（横幅）5贴片 6插屏 7开机（目前仅支持OTT端）8搜索 9激励视频
+  int32 is_support_dpl = 3; // 是否支持deeplink，0：不支持，1：支持。默认是0
+  repeated CreativeSpecs accepted_creative_specs = 4; // 必填。可接受的创意规格信息
+  repeated int32 accepted_interaction_types = 5; // app支持的创意交互类型。3：应用内打开 4：download。默认全部都支持
+  TradingMode trading_mode = 6;  // 必填。交易信息
+  SceneContext scene_context = 7; // optional, 场景上下文
+  int32 is_support_mp = 8; // 是否支持原生调起小程序 0：未知，1：支持。 2:不支持 默认是0
+  int32 patch_location = 9;      // 贴片位置,0默认;1前贴;2中贴;3后贴
+  bool secure = 10;               // 是否支持安全链接
+  int32 is_support_ctr_agent = 11; // 是否支持ctr代理 默认0=不支持， 1=支持
+}
+
+message Template {
+  string ad_template_id = 3; // 广告模版信息
+}
+
+// 场景上下文，不同的场景对应的上下文信息
+message SceneContext {
+  // 视频上下文
+  message VideoContext {
+    string name = 1;          // 视频名称
+    string url = 2;           // 视频地址
+    string area_id = 3;       // 视频所属区域ID
+    string area_name = 4;     // 视频所属区域名称
+    string publish_year = 5;  // 出品年代
+    float duration = 6;       // 视频时长（秒）
+    string type = 7;          // 视频类型
+    string category = 8;      // 分类
+    string theme = 9;         // 题材
+    repeated string ubix_album_id = 10;        // 剧目信息
+    repeated string ubix_channel_id = 11;        // 频道信息
+  }
+  message SearchContext {
+    string search_keyword = 1; // 搜索关键词
+  }
+  VideoContext video_context = 1; // 视频场景上下文，通常发生在用户通过媒体观看视频时，如果有可以提供
+  SearchContext search_context = 2; // 搜索场景上下文
+}
+
+message BidResponse {
+  string request_id = 1;          // 必填。BidRequest中所带的request_id。
+  repeated Ad ads = 2;            // 当广告返回时必填，与adslots对应。当前只支持返回一个广告
+  int64 status_code = 4;          // 广告处理结果的状态码。
+  int64 expiration_timestamp = 5; // 广告过期时间戳，单位为秒
+}
+
+message Ad {
+  message MaterialMeta {
+    // 图片素材信息。
+    message Image {
+      string url = 1;    // 图片地址
+      uint32 width = 2;  // 宽度，单位：像素
+      uint32 height = 3; // 高度，单位：像素
+    }
+    // 视频素材信息
+    message Video {
+      string url = 1;         // 视频地址。必填
+      string cover_image = 2; // 封面图地址。必填
+      float duration = 3;     // 视频时长（秒），可选
+      float size = 4;         // 视频大小，单位（kb）可选
+      int32 width = 5;        // 视频宽，建议必填
+      int32 height = 6;       // 视频高，建议必填
+      int32 bitrate = 7;      // 视频码率,单位（Kbps）。可选
+      string format = 8;      // 视频格式（扩展名）。建议必填
+      string coding_format = 9; // 编码格式，可选（参考 https://en.wikipedia.org/wiki/Video_file_format）
+    }
+    /**
+    支持的事件类型
+    101：曝光事件，创意曝光后，开发者侧回传此事件
+    201：点击事件，创意被用户点击后，开发者侧回传此事件
+    301：下载开始事件，系统开始执行下载后，开发者侧回传此事件
+    302：下载完成事件，app下载完成后，开发者侧回传此事件
+    303：用户开始安装事件，用户点击目标App开始安装，开发者侧回传此事件
+    304：安装完成事件，app下载并安装成功后，开发者侧回传此事件
+    401：deeplink打点，检测到目标app已安装
+    402：deeplink打点，检测到目标app未安装
+    403：deeplink打点，目标app已安装，并且调起成功
+    404：deeplink打点，目标app已安装，但是调起失败
+    5000: 视频开始播放
+    5025: 视频播放进度1/4
+    5050: 视频播放进度1/2
+    5075: 视频播放进度3/4
+    5100: 视频播放完成
+    **/
+    message Tracking {
+      int32 event = 1;
+      repeated string urls = 2; // 需要上报的url列表，如果is_support_macro=1，需要替换url里边包含的宏
+    }
+
+    string creative_id = 1;     // 创意的唯一标志
+    int32 creative_type = 2;    // 必填。该广告的创意类型，和Adslot对应。1：单图，2：多图，3：视频
+    int32 interaction_type = 3; // 广告支持的交互类型，和Adslot对象。3：应用内打开 4：download
+    string title = 4;           // 可选。广告标题。信息流必填
+    string description = 5;     // 可选。广告描述。信息流必填
+    string app_name = 6;        // 可选。针对应用下载类广告。
+    string package_name = 7;    // 下载类广告（包括deeplink）。IOS填写bundleID，Android填写包名
+    string icon = 8;            // 广告创意的图标URL
+    repeated Image image = 9;   // 可选。创意类型为单图，只有一张图片；为多图时有多张图片。
+    Video video = 10; // creative_type = 3 （视频）时必填，同时可以选择是否需要上报视频相关的事件
+    string target_url = 12;     // 可选。点击创意的响应地址url。
+    string download_url = 13;   // 应用直接下载url，只Android流量。
+    string deeplink_url = 14;   // 应用吊起的直达链接。如果该url非空，优先使用该直达链接
+    repeated Tracking tracking_event = 15; // 用于各种打点的url
+    repeated string win_notice_url = 16;   // 竞价模式时， win notice填写在这里
+    string deal_id = 17; // 在PD合作模式下返回
+    WxMpInfo mp = 19;           // 小程序对象
+    message WxMpInfo {
+      string username = 1; // 小程序原始ID 如:gh_d43f693ca31f
+      string app_id = 2;   // 填应用AppId
+      string path = 3;     // 拉起小程序页面的可带参路径，不填默认拉起小程序首页
+    }
+    string source = 20;         // 广告来源
+    string universal_link = 21; // ios端调起连接 universal_link优先级高于deeplink
+    string app_channel = 22; // DSP在应用商店推广应用的时候，应用商店分配给DSP的渠道号
+    string app_desc = 23; // 可选。应用介绍。针对应用下载类广告。
+    float app_package_size = 24; // 可选。应用大小，单位MB。针对应用下载类广告。
+    string app_publisher = 25; // 可选。APP开发者主体名称。针对应用下载类广告。
+    string down_app_version = 26; // 可选。下载APP版本号。针对应用下载类广告。
+    string privacy_link = 27; // 可选。隐私协议URL。针对应用下载类广告。
+    string permission_link = 28; // 可选。用户权限URL。针对应用下载类广告。
+    string introduce_link = 29;  // 可选。应用介绍URL。针对应用下载类广告。
+    string app_lcp_number= 30;   // 可选。下载应用备案号 LCP。针对应用下载类广告。
+    string app_suitable_age= 31; // 可选。下载应用实用年龄。针对应用下载类广告。
+  }
+
+  string ad_id = 1;          // 必填。广告组ID
+  MaterialMeta creative = 2; // 必填。广告物料
+  uint64 bid_price = 3;      // 竞价模式时必填。出价, cpm分
+  int32 bid_type = 5;        // 出价类型 默认:1,1=cpm
+  int32 settle_type = 6;     // 计费类型 默认:1,1=cpm
+  string ext = 10;            // 扩展字段
+}

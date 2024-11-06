@@ -8,33 +8,7 @@ import (
 	"net/http"
 )
 
-type adx_report_param_map struct {
-	Report_type string `json:"report_type"`
-	Dimension   string `json:"dimension"`
-	Start_date  int    `json:"start_date"`
-	End_date    int    `json:"end_date"`
-	Data_source int    `json:"data_source"`
-	Group_type  int    `json:"group_type"`
-}
-
-type adx_report_data_map struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-	Data    struct {
-		Total     int      `json:"total"`
-		Max_total int      `json:"max_total"`
-		Sdk_list  []string `json:"sdk_list"`
-		Size_list []string `json:"size_list"`
-		Report    map[string][]struct {
-			Bid_ecpm float32 `json:"bid_ecpm"`
-		} `json:"report"`
-	} `json:"data"`
-}
-
-// 返回参数格式化存储
-var adx_report_data adx_report_data_map
-
-func Post() (res []byte, err error) {
+func Post() (request interface{}, err error) {
 	client := &http.Client{}
 
 	//设置请求体，json
@@ -42,10 +16,9 @@ func Post() (res []byte, err error) {
 	//song["mldm"] = "01"
 	//bytesData, _ := json.Marshal(song)
 
-	adx_params := adx_report_param_map{"dsp", "day", 1792028800, 1792633599, 1, 1}
-	adx_json, _ := json.Marshal(adx_params)
+	body, _ := json.Marshal(request)
 
-	req, err := http.NewRequest("POST", "http://saas.adx.com/api/v1/report/dsp/data", bytes.NewBuffer([]byte(adx_json)))
+	req, err := http.NewRequest("POST", "http://saas.adx.com/api/v1/report/dsp/data", bytes.NewBuffer(body))
 	if err != nil {
 		return nil, fmt.Errorf("post error：【%s】", err.Error())
 	}

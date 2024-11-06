@@ -1,32 +1,29 @@
 package routers
 
 import (
-	"fmt"
-	"github.com/beego/beego/v2/core/config"
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
-	"web/controllers"
 )
 
 func init() {
 	//一、基础路由
 	beego.Get("/hw", func(ctx *context.Context) {
 
-		fmt.Println(config.String("httpport"))
-
-		db, _ := config.GetSection("db")
-
-		fmt.Println(db["read_host"])
+		//fmt.Println(config.String("httpport"))
+		//
+		//db, _ := config.GetSection("db")
+		//
+		//fmt.Println(db["read_host"])
 
 		ctx.Output.Body([]byte("hello world"))
 	})
 
 	//二、RESTful Controller 路由
-	beego.Router("/", &controllers.DefController{})
-	beego.Router("/hello", &controllers.DefController{}, "get:Hello")
-
-	//三、自动路由
-	beego.AutoRouter(&controllers.DefController{})
+	//beego.Router("/", &controllers.DefController{})
+	//beego.Router("/hello", &controllers.DefController{}, "get:Hello")
+	//
+	////三、自动路由
+	//beego.AutoRouter(&controllers.DefController{})
 
 	// /def/login   调用 ObjectController 中的 Login 方法
 	// /def/logout  调用 ObjectController 中的 Logout 方法

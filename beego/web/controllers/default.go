@@ -25,8 +25,9 @@ func (c *DefController) Get() {
 }
 
 type Hello struct {
-	Data string	`json:"data,omitempty"`
+	Data string `json:"data,omitempty"`
 }
+
 func (c *DefController) Hello() {
 	//c.Ctx.WriteString("hello, world")
 	c.Ctx.JSONResp(Hello{"hello, world"})

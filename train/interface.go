@@ -26,7 +26,7 @@ func (v *Vertex) Abs() float64 {
 	return math.Sqrt(v.X*v.X + v.Y*v.Y)
 }
 
-func main() {
+func Interface() {
 	var a Abser
 	f := MyFloat(-math.Sqrt2)
 	v := Vertex{3, 4}

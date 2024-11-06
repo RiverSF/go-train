@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"river/gomod/questions"
+	"river/train"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,7 +20,7 @@ type Test struct {
 	Bc string `json:"bb,omitempty"` //字段在JSON中显示为键 b, 如果该字段的值为空，则从对象中省略该字段
 	Cc string `json:",omitempty"`   //字段在JSON中显示为键"C"(默认值)，但是如果字段值为空，则跳过该字段
 	Dc string `json:"-"`            //忽略该字段
-	Ec string `json:"-,"`           //字段在JSON中显示为键"-"
+	Ec int    `json:"-,"`           //字段在JSON中显示为键"-"
 }
 
 var mu sync.Mutex
@@ -38,6 +38,24 @@ func init() {
 	一句话总结： import –> const –> var –> init() –> main()
 	*/
 	fmt.Println("init1:", 123)
+
+	//list := []Test{
+	//	{
+	//		Ec: 2,
+	//	},
+	//	{
+	//		Ec: 1,
+	//	},
+	//}
+	//
+	//sort.Slice(list, func(i, j int) bool { // Sort优先级排序
+	//	if list[i].Ec < list[j].Ec {
+	//		return true
+	//	}
+	//	return false
+	//})
+
+	train.TimeRate()
 }
 
 // 完成对变量的拷贝赋值
@@ -48,7 +66,7 @@ func (d *Test) clone() *Test {
 
 func main() {
 	//go 训练题
-	questions.Q20240510()
+	//questions.Q20240528()
 
 	//mu.Lock()
 	// new 产生一个指针类型变量，建议使用make初始化变量

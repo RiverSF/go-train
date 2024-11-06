@@ -1,0 +1,340 @@
+syntax = "proto2";
+
+package gaode;
+
+option go_package="./;gaode";
+
+//import "proto/frequency.proto";
+//import "proto/blackinfo.proto";
+//import "proto/logparam.proto";
+
+// admerger 约定：Request 内字段不能有重名
+message Request {
+    // 当前协议版本号，目前为1
+    required int32 version = 1;
+    // 此请求的唯一id
+    required string request_id = 2;
+    // 媒体位信息
+    message Impression {
+        // 媒体位id, 由 ssp 统一分配
+        required int32 pid = 1;
+        // 媒体位 name, 由 ssp 统一分配
+        required string pname = 2;
+        //广告位的宽和高
+        optional int32 width = 3;
+        optional int32 height = 4;
+        // 可以展示的广告数量
+        optional int32 slot_num = 5 [default = 1];
+        // 支持的广告创意标识
+        repeated string creative_id = 6;
+        //预投放日期, 仅开屏使用，格式:"20160602"
+        repeated string campaign_date = 7;
+        // RTB的底价，非RTB方式可不填, 单位：分
+        optional int32 bid_floor = 8;
+        optional string external_info = 9;
+        optional string page_id = 10;
+        optional string push_event = 11;
+        optional string navi_type = 12;
+        optional string come_from = 13;
+        repeated string deal_id = 14;
+    }
+    repeated Impression imp = 3;
+
+    // 设备信息
+    message Device {
+        // ipv4 或者 ipv6 , 客户端真实IP地址
+        optional string ip = 1;
+        // 4 表示 ipv4; 6 表示 ipv6; 其他值表示未知
+        optional int32 ip_type = 2;
+        // user agent，来自http头
+        optional string user_agent = 3;
+        // IOS6.0及以上的idfa号
+        optional string idfa = 4;
+        // 安卓设备的imei号
+        optional string imei = 5;
+        // 安卓设备的imei号的md5值,若填写imei原值，则不用填此字段
+        optional string imei_md5 = 6;
+        // 设备的mac地址
+        optional string mac = 7;
+        // 设备的mac地址的md5值, 若填写mac原值，则不用填此字段
+        optional string mac_md5 = 8;
+        // android_id
+        optional string android_id = 9;
+        // 设备类型，0-手机;1-平板;2-PC;3-互联网电视
+        optional int32 device_type = 10;
+        // 设备品牌
+        // 例如：nokia, samsung
+        optional string brand = 11;
+        // 设备型号
+        // 例如：n70, galaxy
+        optional string model = 12;
+        // 操作系统
+        // 例如：Android,iOS
+        optional string os = 13;
+        // 操作系统版本
+        // 例如：7.0.2
+        optional string osv = 14;
+        // 设备网络
+        // 例如: cell, wifi
+        optional string net = 15;
+        // 设备所处网络环境 0-未识别, 1-wifi, 2-2g, 3-3g, 4-4g
+        optional int32 network = 16 [ default = 1 ];
+        // 设备的网络运营商 0-未知, 1-移动, 2-联通, 3-电信
+        optional int32 operator = 17;
+        // 设备屏幕尺寸：宽
+        optional int32 width = 18;
+        // 设备屏幕尺寸：高
+        optional int32 height = 19;
+        // 设备密度，对应于pixel_ratio
+        optional int32 pixel_ratio = 20 [default=1000];
+        // 屏幕方向 0-未知, 1-竖屏, 2-横屏
+        optional int32 orientation = 21;
+        // 用户所处时区的分钟偏移量
+        // 例如：如果是东八区，则 timezone_offset = 60 * 8 = 480.
+        optional int32 timezone_offset = 22[ default = 480 ];
+
+        message Geo {
+          // 枚举: "start_poi", "cur_poi", "end_poi"
+          optional string geo_name = 1;
+          message Poi {
+            // 纬度, 取值范围[-90.0 , +90.0]
+            optional double lat = 1;
+            // 经度, 取值范围[-180.0 , +180.0]
+            optional double lng = 2;
+            // 此位置 poiid, 尽可能设值
+            optional string poiid = 3;
+            // 此位置 name, 尽可能设值
+            optional string name = 4;
+          }
+          optional Poi poi = 2;
+        }
+        repeated Geo geo = 23;
+
+        // 用户已安装 app 列表
+        repeated string installed_app = 24;
+        // oaid
+        optional string oaid = 25;
+        // alibaba AAID
+        optional string ali_aaid = 26;
+        // 语言设置
+        optional string language = 27;
+        // 高德 tid
+        optional string tid = 28;
+        optional string openudid = 29;
+        // 例如：iPhone13,2
+        optional string mn = 30;
+        optional string caid = 31;
+    }
+    optional Device device = 5;
+    // APP属性
+    message App {
+        // 应用包名, 例如：com.moji.MojiWeather
+        optional string package_name = 1;
+        // 应用名，例如：高德地图
+        optional string app_name = 2;
+        // 客户端渠道
+        optional string dic = 3;
+        // app 大版本，例如：ANDH110100
+        optional string div = 4;
+        // app 小版本，例如：1802
+        optional string dibv = 5;
+        // app 场景:
+        // 1 冷启动Amap进入主图
+        // 2 在主图从后台切回前台
+        // 3 进入消息盒子时
+        // 4 主动刷新消息盒子
+        // 5 其它页面切后台再切前台
+        optional string scene = 6;
+        // app类目
+        repeated string category = 7;
+        // channel
+        optional string channel = 8;
+		//首次启动标示
+        optional int32 first_load = 9;
+    }
+    optional App app = 6;
+
+    // 用户数据
+    message User {
+        // 登陆用户 user_id
+        optional string user_id = 1;
+        //阿里内部使用
+        optional string aid = 2;
+        //阿里内部使用
+        optional string nick_name = 3;
+        //阿里内部使用
+        optional string ap_id = 4;
+        // 用户标签列表
+        message UserTag {
+            // 用户标签分类: 1 - 兴趣标签
+            required int32 type = 1;
+            // 媒体侧 用户标签ID
+            repeated string ids = 2;
+        }
+        repeated UserTag user_tags = 5;
+        // 阿里内部使用
+        optional string utdid = 6;
+        // 高德内部使用, adiu地址
+        optional string adiu = 7;
+        // 高德内部使用, cifa 地址
+        optional string cifa = 8;
+        // 高德内部使用, adcode地址
+        optional string adcode = 9;
+        // 高德内部使用, testid
+        optional string test_id = 10;
+        // 高德内部使用, libra 实验标签
+        optional string libra_tag = 11;
+        // 高德内部使用, libra 实验标签
+        optional string libra_sample = 12;
+        // city_code
+        optional string city_code = 13;
+        // diu3
+        optional string diu3 = 14;
+        // diu
+        optional string diu = 15;
+        // diu2
+        optional string diu2 = 16;
+
+        // frequency info
+        //optional UserFreqs freqs_info = 17;
+    }
+    optional User user = 7;
+    // 是否必须返回https广告
+    optional bool https_required = 8 [default = false];
+    optional bool is_preview = 9 [ default = false ]; // 预览标记
+    optional string msg_cid = 10;
+    optional string pressure_test = 11;
+    optional string source_from = 12;
+    optional string ajxVersion = 13;
+    optional string csid = 14;
+    optional string gsid = 15;
+    optional string use_log = 16;
+    repeated string preview_ad_ids = 17;
+    optional string api_type = 18;
+    optional string cachelist = 19;
+    //repeated BlackInfo blackinfo_list = 20;
+    optional string query_poi = 21;    // 用户最近三小时搜索过的poi  json结构
+    optional string vehicle_info = 22; // 车辆信息 json结构
+    optional string content_category = 23; // 通知中心内容分类
+    optional string query_id = 24; // 通知中心（刷下一页属于同一个query_id）
+    optional string key_words = 25; // 关键词
+    optional string ttag = 26;     // ttag标签
+    optional string center_page_id = 27;   // 资讯翻页
+    message Attr{
+        required string name = 1;  // 属性名
+        required string value = 2; // 属性值
+    }
+    repeated Attr attr = 28;
+    optional string use_llm = 29 [default = "false"]; // 是否使用大模型
+    optional string view_adcode = 30; // 图面adcode
+}
+
+message Response {
+    //对应Request中的id
+    optional string request_id = 1;
+    // 0-ok，其他值表示无广告返回
+    optional int32 status = 2 [ default = 0 ];
+    // 一个位置上的广告
+    message Seat {
+        // 指定请求里的impression id
+        required int32 pid = 1;
+        // 广告字段
+        message Ad {
+            // 广告id
+            required string ad_id = 1;
+            //广告创意的唯一标识
+            optional string creative_ids = 2;
+            // 创意类型: 1 文字 2 图片 3 Flash 4 视频
+            optional int32 creative_type = 3;
+            message Attr{
+                // 属性名
+                required string name = 1;
+                // 属性值
+                required string value = 2;
+                // 值类型
+            }
+            repeated Attr attr = 4;
+            // 广告行业类目
+            repeated int32 typecode = 5;
+            // 展现反馈地址
+            repeated string impression_tracking_url = 6;
+            // 点击跟踪地址
+            repeated string click_tracking_url = 7;
+            // 点击跳转地址 short地址
+            optional string click_through_url = 8;
+            //APP唤醒地址
+            optional string deeplink_url = 9;
+            //APP下载地址
+            optional string download_url = 10;
+            // 落地页打开方式
+            optional int32 open_type = 11;
+            //计划投放日期, 仅开屏使用，如:"20160602"
+            repeated string campaign_date = 12;
+            //广告来源
+            optional string ad_source = 13;
+            //广告第一报价,内部使用,单位(分)
+            optional int32 bid_price = 14;
+            //广告结算价,内部使用,单位(分)
+            optional int32 settle_price = 15;
+            // 竞价成功通知，服务端发送
+            optional string winnotice_url = 16;
+            // 部分特殊场景需要，用法联系运营同学
+            optional int32 type = 19;
+            optional int32 displayads = 20;
+            // 落地页类型，url_type: 落地页类型依次表示 H5url:1 , pol详情页:2, scheme:3   无跳转:4  跳出型落地页:5 东风: 7
+            optional string url_type = 21;
+            // 广告优先级
+            optional int32 priority = 22; // 天擎优先级
+            optional int32 is_topview = 23 [default = 0];
+
+            // topview 曝光跟踪地址
+            repeated string third_impression = 24;
+            // topview 点击跳转地址
+            repeated string third_click = 25;
+
+            // 点击跳转地址原始地址
+            optional string click_through_url_original = 26;
+
+            // 广告主ID--东风对应deal_id
+            optional string deal_id     = 27;
+
+            optional int32 width        = 28;
+            optional int32 height       = 29;
+            optional int32 meta_priority = 30; // meta优先级
+
+            // RTA模式列表
+            // df开屏-creativeid_list
+            // rta_type后续约定使用方式,当前只有df开屏
+            optional string rta_type = 40;
+            repeated string rta_content = 41;
+            
+            // 黑名单细化需求-新增行业信息/投放目标
+            optional int64 adgroup_id = 42;
+            optional int32 business_id = 43;
+            optional int32 promotion_type = 44;
+            message CreativeAttr {
+                repeated Attr attr = 1;
+            }
+            repeated CreativeAttr creative_attr = 45;
+            optional string card_style = 46;
+            optional double card_score = 47;
+            repeated string tags = 48;
+            message ArrayAttr{
+                // 属性名
+                required string name = 1;
+                // 属性值
+                repeated string value = 2;
+            }
+            repeated ArrayAttr arrAttr = 49;
+            //optional LogParam log_param = 50;
+            optional string universal_url = 51;
+            repeated string them_info = 100;            
+        }
+        repeated Ad ad = 2;
+    }
+    repeated Seat seat = 3;
+    optional bool user_tag_expected = 4 [ default = false ]; // 期望提供媒体用户标签：默认false-不提供；true-提供
+    optional int32 source = 6; // 标记是Meta还是天擎广告,一次返回中只可能返回Meta或者天擎其中一种广告，1=meta,2=opt
+
+    optional int32 priority = 99; // match_server内部使用,根据meta和opt链路进行优选, 临时字段
+}

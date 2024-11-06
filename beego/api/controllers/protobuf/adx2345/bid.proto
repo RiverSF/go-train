@@ -1,0 +1,238 @@
+syntax = "proto3";
+package adx2345;
+option go_package="./;adx2345";
+message Request {
+string reqid = 1; //必填 	标识一次请求的唯一id
+string api_version = 2; //版本号，固定为2.0
+message Imp {
+string id = 1; //必填 	标识该imp的唯一id
+int32 seat_id = 2; //选填 	广告位标识id, DSP先同步获取ADX资源的素材标准，然后根据本字段识别曝光资源的来源和素材标准
+message Display {
+int32 template_id = 1; //必填 	广告模板id
+int32 width = 2; //必填 	广告位宽度
+int32 height = 3; //必填 	广告位高度
+}
+repeated Display display_list = 3; //选填 	广告位支持的广告形式: 包含多个，代表该位置支持多种广告形式，投放方可以根据自己需要选取其中一个广告投放，返回投放广告对应的广告形式id object的结构见display object
+message BidInfo {
+int32 bid_type = 1; //必填 	允许的竞价类型 0-CPM
+float bid_floor = 2; //选填 	可接受的底价 单位:分/千次曝光
+}
+repeated BidInfo bid_info_list = 4; //选填 	竞价信息，包含允许的竞价类型和底价，至少存在一个bidinfo object的结构
+repeated string deal_id = 5; //选填 	直接交易标识 ID,由交易平台和 DSP 提前约定
+repeated int32 action_type = 6; //支持的广告交互类型 0-无限制、1-H5、2-下载、3-唤醒、4-微信小程序、10-LBA、21-仅展示不可点击
+int32 ad_type = 7; //选填 	广告类型: 1-开屏 2-插屏 3-信息流 4-激励视频 5-推送
+}
+
+repeated Imp imp_list = 3; //必填 	曝光信息, 广告位信息, 一个BidRequest可能包含多个imp对象, 至少包含一个 object的结构见imp object
+message App {
+string id = 1; //必填 	APP id, 由ADX定义
+string name = 2; //选填 	APP名称
+string package_name = 3; //选填 APP package name, 平台内唯一
+repeated int32 cat = 4; //选填 	APP类型        需要参数测试？？？？？
+string ver = 5; //选填 	APP版本号
+string keywords = 6; //选填 	逗号分隔的APP关键词
+string cid = 7; //选填 	ssp对应渠道id
+string appchannel = 8; //选填 	app渠道id
+}
+App app = 4; //选填 	APP信息, 仅当广告位出现在APP时, 才会包含APP对象 object的结构见app object
+message Device {
+string ua = 1; //选填 	浏览器的user agent
+int32 device_type = 2; //选填 	设备类型 0-PC 1-手机 2-平板 3-互联网电视
+string brand = 3; //选填 	设备品牌(如: apple)
+string model = 4; //选填 	设备型号(如: iphone)
+string make = 5; //选填 	设备厂商(如: apple)
+int32 orientation = 6; // 屏幕方向 0-位置 1-竖屏 2-横屏
+string hmsVersion = 7; // 华为机型HMS Core版本号(如: 60000306)
+string asVersion = 8; // 大陆厂商安卓设备AS版本号(如: 110302302)
+int32 os = 9; //选填 	操作系统 0-Windows 1-MacOS 2-Linux 3-IOS 4-Android
+string osv = 10; //选填 	操作系统版本号
+int32 density = 11; //选填 	屏幕密度, 默认为400  即将废弃
+string ip = 12; //选填 	ipv4
+string ipv6 = 13; //选填 	ipv6
+int32 carrier = 14; //选填 	运营商 0-电信 1-移动 2-联通 3-网通 4-未知
+int32 network = 15; //选填 	网络类型 0-wifi 1-earthnet(有线网络) 2-2G 3-3G 4-4G 5-5G 6-未知
+int32 width = 16; //选填 	物理屏幕宽度
+int32 height = 17; //选填 	物理屏幕高度
+string imei = 18; //选填 	设备号imei
+string imei_md5 = 19; //选填 设备号imei的md5
+string oaid = 20; //选填 Android Q以上版本的设备号 明文形式
+string oaid_md5 = 21; //选填 oaid的md5
+string dpid = 22; //选填 	Android id
+string dpid_md5 = 23; //选填 	Android id的md5
+string idfa = 24; //选填 	Apple设备的idfa
+string idfa_md5 = 25; //选填 	Apple设备的idfa的md5
+string mac = 26; //选填 	设备的mac值
+string mac_md5 = 27; //选填 设备的mac值的md5
+string boot_mark = 28; //选填 取原值进⾏传输 iOS：1623815045.970028 Android：ec7f4f33-411a-47bc-8067-744a4e7e0723
+string update_mark = 29; //选填 取原值进⾏传输 iOS：1581141691.570419583 Android：1004697.709999999
+string birthTime = 30; //选填 设备初始化时间
+string bootTime = 31; //选填 系统启动时间
+string updateTime = 32; //选填 系统更新时间
+string idfv = 33; //选填 苹果开发者标识
+string paid = 34; //选填 拼多多版caid，仅iOS
+message Caid {
+string id = 1;            // caid 原值
+string bootTimeInSec = 2; // 设备启动时间
+string countryCode = 3;   // 国家
+string language = 4;      // 语言
+string deviceName = 5;    // 设备名称
+string model = 6;         // 设备型号
+string systemVersion = 7; // 系统版本
+string machine = 8;       // 设备 machine
+string carrierInfo = 9;   // 运营商
+string memory = 10;       // 物理内存
+string disk = 11;         // 磁盘大小
+string sysFileTime = 12;  //
+string timeZone = 13;     // 时区
+string initTime = 14;     // 设备初始化时间
+string version = 15;      // caid 原值版本号
+}
+Caid caid = 35;
+message Geo {
+float lat = 1; //选填 	纬度 (-90.0 - 90.0), 负值代表南
+float lon = 2; //选填 	经度 (-180.0 - 180.0), 负值代表西
+int32 type = 3; //选填 	位置来源 1-GPS定位 2-IP地址 3-用户提供(如注册信息)
+string country = 4; //选填 	国家
+string province = 5; //选填 	国家
+string city = 6; //选填 	城市
+}
+Geo geo = 36; //选填 	地域信息 object的结构见geo object
+int32 ppi = 37; //选填 	像素密度，表示每英寸像素点
+float pxRatio = 38; //选填 屏幕密度
+string aaid = 39; //选填 阿里集团内推出的匿名广告标识符，格式示例：CD7D878A870C-97D4-89A4-3EB3-D48AF066
+string elapseTime = 40; //选填 开机时长
+int32 sysCpuNum = 41; //选填  设备cpu数量
+int32 batteryState = 42; //设备当前充电状态 1:未知状态，2:正在充电，3 放电 4:未充满，5:满状态
+int32 battery = 43; //选填  设备电量
+string romVersion = 44; //选填 系统rom版本
+string sdFreeSpace = 45; //选填 磁盘剩余空间
+}
+Device device = 5; //选填 	设备信息
+message User {
+string id = 1; //选填 	由ADX定义的用户id
+int32 yob = 2; //选填 	出生年份 4位数字
+string gender = 3; //选填 	性别 M-男 F-女 默认-未知
+string keywords = 4; //选填 	逗号分隔得用户关键词或兴趣点
+string wuid = 5; //选填 	逗号分隔得用户关键词或兴趣点
+}
+User user = 6; //选填 	用户信息
+message Site {
+int32 id = 1; //必填 	站点id, 由ADX定义的site id
+string name = 2; //选填 	站点名称
+string domain = 3; //选填 站点域名
+string url = 4; //选填 	当前页面的url
+string ref = 5; //选填 	当前页面的referer url
+string keywords = 6; //选填 	逗号分隔的页面关键词
+}
+Site site = 7; //选填 	站点信息, 仅当广告位出现在web时, 才会包含site对象
+repeated string bcat = 8; //选填 	拒绝的广告分类
+repeated string badv = 9; //选填 	拒绝的广告主域名
+int32 test = 10; //选填 	测试字段, 标识是否涉及收费 0-生产模式 1-调试模式
+int32 at = 11; //选填 	该值固定为2 竞价类型 1-first price 2-second price plus dsp可以只处理at值为2的请求（仅rtb）
+message Ext {
+string iapp_list = 1; //需要测试与完善扩展结构
+}
+Ext ext = 12; //选填 	保留字段
+}
+
+
+message Response {
+string resid = 1; //必填 	response id, 与request id相同
+repeated SeatBidOptions seat_bid_list = 2; //选填 广告位-竞价列表, 如果参与竞价, 必须至少包含一个seat_bid对象 object的结构
+string bidid = 3; //选填 由DSP定义的响应id，用于 logging/tracking(日志或效果追踪)
+}
+
+message SeatBidOptions {
+repeated BidOptions bid_list = 1; //必填 竞价信息
+string adv = 2; //选填 该次竞价是代表谁参与的，一般设置成广告主id，用于logging/tracking
+}
+
+message BidOptions {
+string imp_id = 1; //必填 本次竞价所关联的imp id
+int32 price = 2; //必填 出价 单位:分
+string creative_id = 3; //必填 广告创意素材id, DSP需保证该id在DSP侧的唯一性
+string deal = 4; //选填 预定的资源id, 仅pd和pdb业务使用
+DirectiveResponseOptions directive_response = 5; //选填 广告创意信息, 免审核时使用, 白名单内的DSP此项必填
+int32 iapp_filter = 6; //选填 0=不过滤(默认) 1=过滤已安装 2=过滤未安装
+string ext_data = 7; //选填 自定义宏, 会替换竞价成功后的__EXT_DATA__宏
+}
+
+message DirectiveResponseOptions {
+string creative_id = 1; //必填 广告创意素材id, DSP需保证该id在DSP侧的唯一性
+int32 advertiser_id = 2; //必填 广告主id
+string advertiser_name = 3; //必填 广告主名称
+int32 vocation = 4; //必填 广告主行业编码, 详见广告主行业编码表
+int32 template_id = 5; //必填 广告模板id
+message Material {
+string title = 1;          // 推荐 广告标题
+string description = 2;    // 推荐 广告描述
+string btn = 3;            // 广告按钮文字
+string brand = 4;          // 品牌描述
+message Image {
+string url = 1;   // 必填 图片地址
+int32 width = 2;  // 推荐 图片宽度，单位：像素
+int32 height = 3; // 推荐 图片高度，单位：像素
+}
+repeated Image images = 5; // 推荐 广告图片素材，图文或纯图时必填
+Video video = 6;           // 推荐 广告视频素材，视频广告必填
+message Video {
+string url = 1;     // 必填 视频地址
+int32 duration = 2; // 推荐 视频时长，单位：秒
+int32 size = 3;     // 选填 视频大小，单位：KB
+Image cover = 4;    // 推荐 视频封面图片或视频后贴片图片
+int32 protocol = 5; // 选填 视频协议类型
+}
+Image icon = 7; // 广告 icon 图片
+}
+Material material = 6; //必填 创意素材内容, 包括视频, 图片, 文本等. 需严格按照广告形式的定义顺序来指定上传
+message AppInfo {
+int32 product_type = 1; //必填 1-普通链接 2-android应用下载 3-ios应用下载
+string android_url = 2; //选填 安卓下载地址，下载类时android_url或 ios_url⾄少填⼀个，其它情况直接过滤为空
+string ios_url = 3; //选填 IOS下载地址，下载类选填
+string deeplink = 4; //选填 应用直达URL，SDK客户端会对deeplink地址进行有效性校验，无效的话会自动转成非唤起的广告形式，打开落地页
+string package_name = 5; //选填 下载应用包名 下载类广告必填
+string app_name = 6; //选填 应用名称，下载和唤醒类广告必填
+int32 app_size = 7; //选填 应用大小，单位 KB，下载类需要
+string app_logo = 8; //选填 应用logo，下载和唤醒类广告必填
+string intro = 9;   // 选填 应用介绍
+string version = 10;   // 选填 应用版本号，下载类广告必填
+string developer = 11; // 选填 应用开发者，下载类广告必填
+string privacy = 12;  // 选填 应用隐私协议，下载类广告必填
+string privacy_url = 13; // 选填 应用隐私协议链接，下载类广告必填。注：下载类广告 privacy、privacy_url 任填一个即可。
+message Permission {
+string title = 1; // 必填 隐私权限标题
+string desc = 2;  // 必填 隐私权限详细描述
+}
+repeated Permission permissions = 14; // 应用隐私权限列表
+string permission_url = 15; // 选填 应用隐私权限Url，下载类广告必填。注：下载类广告 permission_url、function_desc 任填一个即可
+string function_desc = 16; // 选填 产品功能介绍，下载类广告必填
+message MiniProgram {
+string wx_username = 1; // 必填 所需跳转的小程序原始 ID（以"gh_"开头）
+string wx_path = 2;     // 推荐 所需跳转的小程序内页面路径及参数，不填默认拉起小程序主页
+uint32 wx_minitype = 3; // 必填 所需跳转的小程序类型，0：正式版，1：开发版，2：体验版
+}
+MiniProgram wx_miniProgram = 17; // 调起小程序
+string universal_link = 18; // 选填 IOS universal_link
+}
+AppInfo app_info = 7; //选填 app下载唤起
+string url = 8; //必填 落地url 支持302
+repeated string imptk = 9; //选填 曝光监测url, 最多5个
+repeated string clktk = 10; //选填 点击监测url, 最多3个
+repeated string dstarttk = 11; //选填 仅用于应用下载广告，开始下载监播地址, 如果需要该信息请与我方确认投放资源是否支持，最多3个
+repeated string dfinishtk = 12; //选填 仅用于应用下载广告，下载完成监播地址，最多3个
+repeated string dinstalltk = 13; //选填 仅用于应用下载广告；安装完成监播地址，最多3个
+repeated string deeplinktk = 14; //选填 唤醒成功上报地址，当前仅用于开屏广告位，最多8个
+repeated string dstartinstalltk = 15; //选填 仅用于应用下载广告；开始安装监播地址。如果需要该信息请与我方确认投放资源是否支持，最多3个
+repeated string deeplinkfailedtk = 16; //选填 deeplink调起失败时上报的url列表，最多3个
+repeated string installedtk = 17; //选填 deeplink跳转时判断应用已安装情况下上报的url列表，最多3个
+repeated string uninstalledtk = 18; //选填 deeplink跳转时判断应用未安装情况下上报的url列表，最多3个
+repeated string incentiveloadedtk = 19; //选填 仅用于激励视频广告，激励视频加载成功时统计url列表, 最多3个
+repeated string videostarttk = 20; //选填 仅用于信息流视频、激励视频，视频开始播放统计url列表，最多3个
+repeated string firstQuartiletk = 21; //选填 仅用于激励视频，视频播放至25%时统计url列表，最多3个
+repeated string midpointtk = 22; //选填 仅用于激励视频，视频播放至50%时统计url列表，最多3个
+repeated string thirdQuartiletk = 23; //选填 仅用于激励视频，视频播放至75%时统计url列表，最多3个
+repeated string videoCompletetk = 24; //选填 仅用于信息流视频、激励视频，视频播放完成统计url列表，最多3个
+repeated string incentiveerrortk = 25; //选填 仅用于激励视频广告，激励视频播放错误时统计url列表，最多3个
+string nurl = 26; //选填 竞胜通知
+string lurl = 27; //选填 竞败通知
+}

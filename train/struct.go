@@ -13,7 +13,7 @@ func (x Pe) IsStructureEmpty() bool {
 	return reflect.DeepEqual(x, Pe{})
 }
 
-func main() {
+func Struct() {
 	x := Pe{}
 
 	if x.IsStructureEmpty() {

@@ -21,3 +21,6 @@
 go.work
 
 .idea
+go.sum
+/beego/api/logs/
+/beego/api/go.sum
