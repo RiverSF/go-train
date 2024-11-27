@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+
+	_ "net/http/pprof"
 )
 
 //https://gin-gonic.com/zh-cn/docs/
@@ -17,6 +19,9 @@ func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+
+	// 注册中间件
+	//r.Use(MiddleWare())
 
 	//POST /post?ids[a]=1234&ids[b]=hello HTTP/1.1
 	//Content-Type: application/x-www-form-urlencoded
@@ -72,7 +77,7 @@ func setupRouter() *gin.Engine {
 	//	  "foo":  "bar",
 	//	  "manu": "123",
 	//}))
-	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
+	authorized := r.Group("/v1", gin.BasicAuth(gin.Accounts{
 		"foo":  "bar", // user:foo password:bar
 		"manu": "123", // user:manu password:123
 	}))
