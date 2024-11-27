@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -51,4 +52,17 @@ func FormatTimeWithTimeZoneOffset(t time.Time) string {
 
 	// 返回完整的时间字符串，包括时区偏移量
 	return baseTimeStr + timeZoneOffset
+}
+
+// Fri, 12 Jul 2013 09:13:05 GMT
+func GetGMTTime() string {
+	now := time.Now()
+	utcTime := now.UTC()
+	//1
+	//return utcTime.Format("Mon, 02 Jan 2006 15:04:05 GMT")
+
+	//2.
+	formattedTime := utcTime.Format(time.RFC1123Z)
+	formattedTimeGMT := strings.ReplaceAll(formattedTime, "+0000", "GMT")
+	return formattedTimeGMT
 }

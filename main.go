@@ -2,17 +2,22 @@ package main
 
 import (
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
+	"net/http"
 	"os"
-	"river/train"
+	"river/wedgets/common"
 	"strconv"
 	"strings"
 	"sync"
+	"unicode/utf8"
 	"unsafe"
+
+	_ "net/http/pprof"
 )
 
-type Struct struct {
-	X, Y int
-	Z, w string
+type xy struct {
+	X int
+	Y string
 }
 
 type Test struct {
@@ -24,6 +29,7 @@ type Test struct {
 }
 
 var mu sync.Mutex
+var wg sync.WaitGroup
 
 //基本数据类型 区分
 //值类型： int 系列, float 系列, bool, string 、数组和结构体 struct
@@ -37,7 +43,17 @@ func init() {
 
 	一句话总结： import –> const –> var –> init() –> main()
 	*/
-	fmt.Println("init1:", 123)
+
+	//for i := 0;i<5;i++ {
+	//	wg.Add(1)
+	//	go func() {
+	//		rand.Seed(10)		//初始化随机数生成器，确保每次运行程序时生成的随机数不同。只能调用一次且seed每次要不同，如果seed相同每次随机数也相同
+	//		//rand.NewSource(10)	//可调用多次，seed 可相同
+	//		fmt.Println(rand.Int())
+	//		wg.Done()
+	//	}()
+	//}
+	//wg.Wait()
 
 	//list := []Test{
 	//	{
@@ -55,7 +71,14 @@ func init() {
 	//	return false
 	//})
 
-	train.TimeRate()
+	//train.TimeRate()
+
+	a := xy{
+		X: 0,
+		Y: "中",
+	}
+	b,_ := jsoniter.MarshalToString(a)
+	fmt.Println(b, len(b), utf8.RuneCountInString(b), common.GetGMTTime())
 }
 
 // 完成对变量的拷贝赋值
@@ -65,6 +88,11 @@ func (d *Test) clone() *Test {
 }
 
 func main() {
+	//go func() {
+	//	log.Println(http.ListenAndServe("localhost:6060", nil))
+	//}()
+	http.ListenAndServe("localhost:6060", nil)
+
 	//go 训练题
 	//questions.Q20240528()
 
