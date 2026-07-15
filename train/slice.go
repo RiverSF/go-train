@@ -1,6 +1,86 @@
 package train
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
+
+type person struct {
+	Name string
+	Age  int
+}
+
+// ByAge 实现 sort.Interface，按 Age 升序
+type ByAge []person
+
+func (a ByAge) Len() int           { return len(a) }
+func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+// ByAgeDesc 实现 sort.Interface，按 Age 降序
+type ByAgeDesc []person
+
+func (a ByAgeDesc) Len() int           { return len(a) }
+func (a ByAgeDesc) Less(i, j int) bool { return a[i].Age > a[j].Age }
+func (a ByAgeDesc) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+// SortSlice 切片排序示例
+func SortSlice() {
+	// 1. 基础类型：sort.Ints / sort.Strings / sort.Float64s
+	ints := []int{5, 2, 9, 1, 5}
+	sort.Ints(ints)
+	fmt.Println("Ints升序:", ints) // [1 2 5 5 9]
+
+	strs := []string{"banana", "apple", "cherry"}
+	sort.Strings(strs)
+	fmt.Println("Strings升序:", strs) // [apple banana cherry]
+
+	// 2. 降序：sort.Sort(sort.Reverse(...))
+	sort.Sort(sort.Reverse(sort.IntSlice(ints)))
+	fmt.Println("Ints降序:", ints) // [9 5 5 2 1]
+
+	// 3. 自定义结构体：sort.Slice 按 Age 升序 / 降序
+	people := []person{
+		{"Bob", 30},
+		{"Alice", 25},
+		{"Carol", 25},
+	}
+	// Age 升序
+	sort.Slice(people, func(i, j int) bool {
+		return people[i].Age < people[j].Age
+	})
+	fmt.Println("Age升序:", people) // [{Alice 25} {Carol 25} {Bob 30}]
+
+	// Age 降序
+	sort.Slice(people, func(i, j int) bool {
+		return people[i].Age > people[j].Age
+	})
+	fmt.Println("Age降序:", people) // [{Bob 30} {Alice 25} {Carol 25}]
+
+	// 4. 实现 Less：sort.Sort(sort.Interface)
+	people2 := []person{
+		{"Bob", 30},
+		{"Alice", 25},
+		{"Carol", 25},
+	}
+	sort.Sort(ByAge(people2))
+	fmt.Println("Less升序:", people2) // [{Alice 25} {Carol 25} {Bob 30}]
+
+	// 复用升序 Less + Reverse 得到降序
+	sort.Sort(sort.Reverse(ByAge(people2)))
+	fmt.Println("Less+Reverse降序:", people2) // [{Bob 30} {Alice 25} {Carol 25}]
+
+	// 或在 Less 里写 >，直接降序
+	sort.Sort(ByAgeDesc(people2))
+	fmt.Println("Less降序:", people2) // [{Bob 30} {Alice 25} {Carol 25}]
+
+	// 5. 稳定排序：相等元素保持原相对顺序
+	nums := []int{3, 1, 2, 1}
+	sort.SliceStable(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	fmt.Println("SliceStable:", nums) // [1 1 2 3]
+}
 
 func Slice() {
 
