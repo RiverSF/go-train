@@ -1,6 +1,6 @@
 # go-train
 
-version: go1.20.3
+version: go1.26.5
 
 ## OpenSpec Skill 使用说明
 
